@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="tet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Word Game - Cyber Security</title>
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+
+<div class="game-container">
+    <header>
+        <h2><img src="image/image.png" alt="" width="80"></h2>
+        <h1>Forma Liafuan / Make a Match</h1>
+        <p class="description">
+            Liga liafuan tuir nia deskrisaun ho lolos.
+        </p>
+    </header>
+
+    <div id="gameArea">
+        <div class="score-board">
+            <div class="score-box">Pontu
+                <span id="score">0</span>
+            </div>
+            <div class="score-box">Pares Loos
+                <span><span id="matches">0</span> / <span id="totalPairs">10</span></span>
+            </div>
+            <div class="score-box">⏱️ Tempu
+                <span id="timer">05:00</span>
+            </div>
+            <div class="score-box">❤️ Vida
+                <span id="lives">3</span>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard"></div>
+        <div id="message"></div>
+
+        <div class="game-buttons">
+            <button class="game-btn" onclick="restartGame()">🔄 Hahú Fali</button>
+            <button class="game-btn next-btn" onclick="goToPrevious()">⬅️ Jogu Anterior</button>
+        </div>
+    </div>
+
+    <div id="resultScreen">
+        <h2 id="resultTitle">🎉 Game Remata!</h2>
+        <p id="resultMessage"></p>
+        <h3>Pontu Ikus: <span id="finalScore">0</span></h3>
+
+        <div class="result-buttons">
+            <button class="game-btn" onclick="restartGame()">▶️ Joga Fali</button>
+            <button class="game-btn menu-btn" onclick="goToMenu()">🏠 Menu Prinsipál</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const wordPairs = [
+    {
+        word: "Social Engineering",
+        meaning: "Téknika manipulasaun psikolójika ne'ebé kriminál ka hacker sira uza hodi lohi ema atu fó sai informasaun sekretu ka fó asesu ba sistema no rede."
+    },
+    {
+        word: "Virus",
+        meaning: "Programa malisiozu ne'ebé bele tama ba ficheiru no espalha bainhira utilizadór loke ka ezekuta ficheiru infetadu. Ezemplu: virus ne'ebé estraga ficheiru iha komputadór."
+    },
+    {
+        word: "Ransomware",
+        meaning: "Malware ne'ebé taka ka enkripta ficheiru sira no husu osan atu fó fila fali asesu. Ezemplu: komputadór husu osan atu loke ficheiru sira."
+    },
+    {
+        word: "Trojan Horse",
+        meaning: "Programa ne'ebé parece seguru, maibé subar atividade malisioza iha laran. Ezemplu: aplikasaun falsu ne'ebé na'ok dadus utilizadór."
+    },
+    {
+        word: "Worm",
+        meaning: "Malware ne'ebé halo kopia-an rasik no espalha liuhusi rede sein presiza utilizadór loke ficheiru ida-idak. Ezemplu: espalha hosi komputadór ida ba komputadór seluk."
+    },
+    {
+        word: "Spyware",
+        meaning: "Software ne'ebé halibur informasaun kona-ba utilizadór sein nia hatene ka autorizasaun. Ezemplu: software ne'ebé rekolla password ka atividade online."
+    },
+    {
+        word: "Adware",
+        meaning: "Software ne'ebé hatudu anúnsiu barak ka anúnsiu ne'ebé la hakarak; balu bele iha risku seguransa. Ezemplu: browser nakonu ho pop-up anúnsiu."
+    },
+    {
+        word: "Keylogger",
+        meaning: "Software ka dispozitivu ne'ebé rejista tecla sira ne'ebé utilizadór tekladu. Ezemplu: rejista password bainhira ema hakerek iha teclado."
+    },
+    {
+        word: "Krimi Sibernetika",
+        meaning: "Atividade ilegál ka krime ne'ebé hala'o uza teknolojia, komputadór no rede internet."
+    },
+    {
+        word: "Seguransa Sibernetika",
+        meaning: "Prátika, téknika no regra sira ne'ebé uza atu proteje sistema komputadór, rede, dadus no rekursu dijitál husi atake malisiozu, na'ok ka estraga."
+    }
+];
+
+let cards = [];
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let finished = false;
+let score = 0;
+let matches = 0;
+let lives = 3;
+let timeLeft = 300;
+let timer;
+
+const gameBoard = document.getElementById("gameBoard");
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function startGame() {
+    clearInterval(timer);
+
+    score = 0;
+    matches = 0;
+    lives = 3;
+    timeLeft = 300;
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+    finished = false;
+
+    document.getElementById("score").textContent = score;
+    document.getElementById("matches").textContent = matches;
+    document.getElementById("totalPairs").textContent = wordPairs.length;
+    document.getElementById("lives").textContent = lives;
+    document.getElementById("timer").textContent = "05:00";
+    document.getElementById("message").textContent = "";
+
+    document.getElementById("gameArea").style.display = "block";
+    document.getElementById("resultScreen").style.display = "none";
+
+    cards = [];
+
+    wordPairs.forEach((pair, index) => {
+        cards.push({ value: pair.word, pairId: index });
+        cards.push({ value: pair.meaning, pairId: index });
+    });
+
+    shuffle(cards);
+    gameBoard.innerHTML = "";
+
+    cards.forEach(card => {
+        const button = document.createElement("button");
+        button.className = "card";
+        button.textContent = card.value;
+        button.dataset.pairId = card.pairId;
+        button.addEventListener("click", () => selectCard(button));
+        gameBoard.appendChild(button);
+    });
+
+    timer = setInterval(() => {
+        if (finished) return;
+
+        timeLeft--;
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        document.getElementById("timer").textContent =
+            String(minutes).padStart(2, "0") + ":" +
+            String(seconds).padStart(2, "0");
+
+        if (timeLeft <= 0) finishGame(false, true);
+    }, 1000);
+}
+
+function selectCard(card) {
+    if (
+        lockBoard ||
+        finished ||
+        card.classList.contains("correct") ||
+        card === firstCard
+    ) return;
+
+    card.classList.add("selected");
+
+    if (!firstCard) {
+        firstCard = card;
+        return;
+    }
+
+    secondCard = card;
+    checkMatch();
+}
+
+function checkMatch() {
+    const isMatch =
+        firstCard.dataset.pairId === secondCard.dataset.pairId;
+
+    if (isMatch) {
+        firstCard.classList.remove("selected");
+        secondCard.classList.remove("selected");
+        firstCard.classList.add("correct");
+        secondCard.classList.add("correct");
+
+        score += 10;
+        matches++;
+
+        document.getElementById("score").textContent = score;
+        document.getElementById("matches").textContent = matches;
+        document.getElementById("message").textContent = "✅ Loos! Parsu ida.";
+
+        resetCards();
+
+        if (matches === wordPairs.length) finishGame(true);
+    } else {
+        lockBoard = true;
+        lives--;
+        score = Math.max(0, score - 2);
+
+        document.getElementById("lives").textContent = lives;
+        document.getElementById("score").textContent = score;
+        document.getElementById("message").textContent =
+            "❌ La hanesan. Tenta fali!";
+
+        firstCard.classList.add("wrong");
+        secondCard.classList.add("wrong");
+
+        setTimeout(() => {
+            if (firstCard) firstCard.classList.remove("selected", "wrong");
+            if (secondCard) secondCard.classList.remove("selected", "wrong");
+
+            resetCards();
+
+            if (lives <= 0) finishGame(false);
+        }, 800);
+    }
+}
+
+function resetCards() {
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+}
+
+function finishGame(won, timeUp = false) {
+    if (finished) return;
+
+    finished = true;
+    clearInterval(timer);
+    lockBoard = true;
+
+    document.getElementById("gameArea").style.display = "none";
+    document.getElementById("resultScreen").style.display = "block";
+    document.getElementById("finalScore").textContent = score;
+
+    if (won) {
+        document.getElementById("resultTitle").textContent = "🎉 Parabéns!";
+        document.getElementById("resultMessage").textContent =
+            "Diak tebes! Ita liga termu Cyber Security 10 hotu.";
+    } else if (timeUp) {
+        document.getElementById("resultTitle").textContent = "⏰ Tempu Hotu Ona!";
+        document.getElementById("resultMessage").textContent =
+            "Ita nia tempu hotu ona. Joga fali atu koko.";
+    } else {
+        document.getElementById("resultTitle").textContent = "💔 Game Remata!";
+        document.getElementById("resultMessage").textContent =
+            "Ita uza vida hotu. Joga fali atu aprende tan.";
+    }
+}
+
+function restartGame() {
+    startGame();
+}
+
+function goToPrevious() {
+    window.location.href = "game.html";
+}
+
+function goToMenu() {
+    window.location.href = "main_menu.html";
+}
+
+startGame();
+</script>
+</body>
+</html>

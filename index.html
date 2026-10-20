@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Security - Loading</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: white;
+            background: linear-gradient(
+                -45deg,
+                #06142e,
+                #073b70,
+                #006c94,
+                #111c4e
+            );
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Background circles */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: 0.3;
+            animation: float 7s ease-in-out infinite alternate;
+        }
+
+        .orb.one {
+            width: 240px;
+            height: 240px;
+            background: #00eaff;
+            top: -70px;
+            left: -60px;
+        }
+
+        .orb.two {
+            width: 300px;
+            height: 300px;
+            background: #744dff;
+            right: -100px;
+            bottom: -100px;
+            animation-delay: 1s;
+        }
+
+        .orb.three {
+            width: 100px;
+            height: 100px;
+            background: #00ffc3;
+            right: 15%;
+            top: 12%;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+            to {
+                transform: translate(30px, -35px) scale(1.15);
+            }
+        }
+
+        /* Main loading card */
+        .loading-container {
+            position: relative;
+            z-index: 2;
+            width: min(90%, 480px);
+            padding: 42px 30px;
+            text-align: center;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.09);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.3);
+            animation: appear 1s ease-out;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(35px) scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Logo */
+        .logo-area {
+            width: 125px;
+            height: 125px;
+            margin: 0 auto 25px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-ring {
+            position: absolute;
+            inset: 0;
+            border: 3px solid transparent;
+            border-top-color: #00f0ff;
+            border-right-color: #00f0ff;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+            box-shadow: 0 0 18px rgba(0, 240, 255, 0.2);
+        }
+
+        .logo-ring.inner {
+            inset: 10px;
+            border-top-color: #a78bfa;
+            border-right-color: transparent;
+            border-bottom-color: #a78bfa;
+            animation: spinReverse 3s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes spinReverse {
+            to { transform: rotate(-360deg); }
+        }
+
+        .logo {
+            width: 78px;
+            height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #00eaff, #5968ff);
+            box-shadow: 0 0 35px rgba(0, 234, 255, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .logo svg {
+            width: 48px;
+            height: 48px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(0, 234, 255, 0.4);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 0 40px rgba(0, 234, 255, 0.8);
+            }
+        }
+
+        h1 {
+            font-size: clamp(24px, 5vw, 32px);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        h1 span {
+            color: #00f0ff;
+        }
+
+        .subtitle {
+            color: #d3e7ff;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        /* Countdown */
+        .countdown-circle {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 22px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .countdown-circle svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .countdown-circle circle {
+            fill: none;
+            stroke-width: 5;
+        }
+
+        .track {
+            stroke: rgba(255, 255, 255, 0.15);
+        }
+
+        .progress {
+            stroke: #00f0ff;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+            filter: drop-shadow(0 0 5px #00f0ff);
+        }
+
+        #countdown {
+            font-size: 42px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.7);
+        }
+
+        .loading-text {
+            font-size: 13px;
+            color: #b8d7ff;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            animation: textBlink 1.5s infinite;
+        }
+
+        @keyframes textBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Loading bar */
+        .progress-bar {
+            height: 7px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(90deg, #00eaff, #a78bfa);
+            box-shadow: 0 0 15px #00eaff;
+            transition: width 1s linear;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 11px;
+            color: #a8c9e8;
+            letter-spacing: 1px;
+        }
+
+        .footer span {
+            color: #00f0ff;
+        }
+
+        @media (max-width: 480px) {
+            .loading-container {
+                padding: 35px 22px;
+            }
+
+            .logo-area {
+                width: 110px;
+                height: 110px;
+            }
+
+            .logo {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+
+    <main class="loading-container">
+
+        <div class="logo-area">
+            <div class="logo-ring"></div>
+            <div class="logo-ring inner"></div>
+
+            <div class="logo">
+                <!-- Cyber Security Shield Logo -->
+                <svg viewBox="0 0 24 24" aria-label="Cyber Security Logo">
+                    <path d="M12 2L20 5V11C20 16 16.5 20 12 22C7.5 20 4 16 4 11V5L12 2Z"/>
+                    <rect x="8" y="10" width="8" height="6" rx="1.5"/>
+                    <path d="M10 10V8.5A2 2 0 0 1 14 8.5V10"/>
+                    <circle cx="12" cy="13" r="0.7" fill="white"/>
+                </svg>
+            </div>
+        </div>
+
+        <h1>Seguransa <span>sibernétika</span></h1>
+
+        <p class="subtitle">
+            Bembindu mai Game Jogu Seguransa sibernétika <br>
+            Aprende • Halimar • Proteje
+        </p>
+
+        <div class="countdown-circle">
+            <svg viewBox="0 0 100 100">
+                <circle class="track" cx="50" cy="50" r="45"/>
+                <circle class="progress" id="circleProgress"
+                        cx="50" cy="50" r="45"/>
+            </svg>
+
+            <span id="countdown">10</span>
+        </div>
+
+        <p class="loading-text" id="loadingText">
+            Prepara Jogu...
+        </p>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <p class="footer">
+            Prepara husi <span>Similie Academy Team</span>
+        </p>
+
+    </main>
+
+    <script>
+        // Change this to "game2.html" if you want to load Game 2.
+        const targetPage = "game.html";
+
+        const totalSeconds = 10;
+        let secondsLeft = totalSeconds;
+
+        const countdown = document.getElementById("countdown");
+        const circleProgress = document.getElementById("circleProgress");
+        const progressFill = document.getElementById("progressFill");
+        const loadingText = document.getElementById("loadingText");
+
+        const circumference = 2 * Math.PI * 45;
+
+        circleProgress.style.strokeDasharray = circumference;
+        circleProgress.style.strokeDashoffset = 0;
+
+        const timer = setInterval(() => {
+            secondsLeft--;
+
+            countdown.textContent = secondsLeft;
+
+            const progress = (totalSeconds - secondsLeft) / totalSeconds;
+
+            circleProgress.style.strokeDashoffset =
+                circumference * progress;
+
+            progressFill.style.width = (progress * 100) + "%";
+
+            if (secondsLeft <= 0) {
+                clearInterval(timer);
+
+                countdown.textContent = "✓";
+                loadingText.textContent = "JOGU PRONTU ONA!";
+
+                setTimeout(() => {
+                    window.location.href = targetPage;
+                }, 500);
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
